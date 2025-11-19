@@ -15,6 +15,7 @@ describe('codex.nvim core behaviour', function()
   local focus_calls
   local ui_state
   local current_win
+  local last_termopen_cmd
 
   local orig_keymap_set
   local orig_keymap_del
@@ -41,6 +42,7 @@ describe('codex.nvim core behaviour', function()
 
     sent = {}
     termopen_calls = 0
+    last_termopen_cmd = nil
     focus_calls = 0
     ui_state = { open = false }
 
@@ -59,6 +61,7 @@ describe('codex.nvim core behaviour', function()
 
     vim.fn.termopen = function(cmd, opts)
       termopen_calls = termopen_calls + 1
+      last_termopen_cmd = cmd
       if opts and opts.on_exit then
         -- keep reference if tests need to trigger exit later
         termopen_calls = termopen_calls
@@ -241,5 +244,18 @@ describe('codex.nvim core behaviour', function()
     actions.send('ping payload', { submit = false })
     assert.is_true(#sent >= 1)
     assert.equal(1, termopen_calls)
+  end)
+
+  it('starts Codex resume when requested', function()
+    codex.setup({
+      auto_status_delay_ms = 0,
+      codex_cmd = { 'codex' },
+      codex_resume_cmd = { 'codex', 'resume', '--id', 'abc123' },
+    })
+
+    actions.resume()
+
+    assert.equal(1, termopen_calls)
+    assert.same({ 'codex', 'resume', '--id', 'abc123' }, last_termopen_cmd)
   end)
 end)

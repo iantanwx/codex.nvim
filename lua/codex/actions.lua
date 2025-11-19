@@ -3,27 +3,31 @@ local terminal = require("codex.terminal")
 local M = {}
 
 function M.open()
-  terminal.open()
+	terminal.open()
+end
+
+function M.resume()
+	terminal.resume()
 end
 
 function M.close()
-  terminal.close()
+	terminal.close()
 end
 
 function M.toggle()
-  terminal.toggle()
+	terminal.toggle()
 end
 
 function M.send(text, opts)
-  terminal.send(text, opts)
+	terminal.send(text, opts)
 end
 
 function M.send_selection()
-  terminal.send_selection()
+	terminal.send_selection()
 end
 
 function M.send_buffer()
-  terminal.send_buffer()
+	terminal.send_buffer()
 end
 
 return M

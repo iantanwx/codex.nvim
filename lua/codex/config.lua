@@ -12,6 +12,7 @@ local defaults = {
 		title = "Codex",
 	},
 	codex_cmd = { "codex" },
+	codex_resume_cmd = { "codex", "resume" },
 	auto_status_delay_ms = 0,
 	enable_session_cache = true,
 	log_tail_enabled = false,

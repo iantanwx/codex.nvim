@@ -89,11 +89,12 @@ local function ensure_terminal_buffer()
 end
 
 local function start_job(conf, opts)
-	ops = opts or {}
+	opts = opts or {}
 	local open_window = opts.open_window
 	if open_window == nil then
 		open_window = true
 	end
+	local cmd = opts.cmd or conf.codex_cmd
 
 	local bufnr = ensure_terminal_buffer()
 	local winid
@@ -104,7 +105,7 @@ local function start_job(conf, opts)
 	end
 
 	api.nvim_buf_call(bufnr, function()
-		state.job_id = fn.termopen(conf.codex_cmd, {
+		state.job_id = fn.termopen(cmd, {
 			on_stdout = handle_output,
 			on_stderr = handle_output,
 			on_exit = handle_exit,
@@ -113,12 +114,12 @@ local function start_job(conf, opts)
 
 	if not state.job_id or state.job_id <= 0 then
 		vim.notify("codex.nvim: failed to start Codex command", vim.log.levels.ERROR)
-		log.error("termopen failed", conf.codex_cmd)
+		log.error("termopen failed", cmd)
 		reset_state()
 		return false
 	end
 
-	log.info("Codex job started", { job_id = state.job_id, cmd = conf.codex_cmd })
+	log.info("Codex job started", { job_id = state.job_id, cmd = cmd })
 	state.running = true
 
 	vim.bo[bufnr].buflisted = false
@@ -161,6 +162,15 @@ end
 
 function M.open()
 	ensure_job(config.get(), { open_window = true })
+end
+
+function M.resume()
+	if is_job_running() then
+		vim.notify("codex.nvim: Codex job already running", vim.log.levels.WARN)
+		return
+	end
+	local conf = config.get()
+	start_job(conf, { open_window = true, cmd = conf.codex_resume_cmd or { "codex", "resume" } })
 end
 
 function M.close()

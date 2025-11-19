@@ -22,6 +22,7 @@ CONFIGURATION                                                          *codex-co
             title = "Codex",
         }
         codex_cmd = { "codex" }
+        codex_resume_cmd = { "codex", "resume" }
         auto_status_delay_ms = 150
         enable_session_cache = true
         log_tail_enabled = false
@@ -49,6 +50,11 @@ LUA API                                                                *codex-ap
 
     require("codex").toggle()
             Toggle the window without touching state.
+
+    require("codex").resume()
+            Start Codex using `codex resume` to pick up the previous CLI
+            session if available. Also exposed as
+            `require("codex").actions.resume()`.
 
     require("codex").send(text[, opts])
             Send arbitrary text to the Codex CLI. When `opts.submit` is

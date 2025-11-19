@@ -63,6 +63,10 @@ function M.toggle()
 	actions.toggle()
 end
 
+function M.resume()
+	actions.resume()
+end
+
 function M.send(text, opts)
 	actions.send(text, opts)
 end

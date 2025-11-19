@@ -26,6 +26,7 @@ Add `codex.nvim` to your plugin manager. With [lazy.nvim](https://github.com/fol
 ## Usage
 
 - `require("codex").open()` / `close()` / `toggle()` control the terminal
+- `require("codex").resume()` (or `.actions.resume()`) launches `codex resume` to pick up the previous CLI session
 - `require("codex").actions.send_selection()` shares the active visual selection
 
 Example manual mappings:
@@ -52,6 +53,7 @@ All settings are optional. These are the defaults:
     title = "Codex",
   },
   codex_cmd = { "codex" },
+  codex_resume_cmd = { "codex", "resume" },
   focus_after_send = false,
   log_level = "warn",
   autostart = false,
