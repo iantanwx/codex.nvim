@@ -74,6 +74,7 @@ end
 
 local function handle_exit()
 	log.warn("Codex job exited", { job_id = state.job_id })
+	ui.close_window()
 	reset_state()
 end
 

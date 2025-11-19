@@ -16,6 +16,7 @@ describe('codex.nvim core behaviour', function()
   local ui_state
   local current_win
   local last_termopen_cmd
+  local last_on_exit
 
   local orig_keymap_set
   local orig_keymap_del
@@ -43,6 +44,7 @@ describe('codex.nvim core behaviour', function()
     sent = {}
     termopen_calls = 0
     last_termopen_cmd = nil
+    last_on_exit = nil
     focus_calls = 0
     ui_state = { open = false }
 
@@ -62,6 +64,7 @@ describe('codex.nvim core behaviour', function()
     vim.fn.termopen = function(cmd, opts)
       termopen_calls = termopen_calls + 1
       last_termopen_cmd = cmd
+      last_on_exit = opts and opts.on_exit
       if opts and opts.on_exit then
         -- keep reference if tests need to trigger exit later
         termopen_calls = termopen_calls
@@ -100,6 +103,7 @@ describe('codex.nvim core behaviour', function()
 
   after_each(function()
     actions.close()
+    last_on_exit = nil
 
     vim.keymap.set = orig_keymap_set
     vim.keymap.del = orig_keymap_del
@@ -257,5 +261,20 @@ describe('codex.nvim core behaviour', function()
 
     assert.equal(1, termopen_calls)
     assert.same({ 'codex', 'resume', '--id', 'abc123' }, last_termopen_cmd)
+  end)
+
+  it('closes the terminal window when resumed job exits', function()
+    codex.setup({
+      auto_status_delay_ms = 0,
+      codex_cmd = { 'codex' },
+    })
+
+    codex.resume()
+    assert.truthy(last_on_exit)
+    assert.is_true(ui_state.open)
+
+    last_on_exit()
+
+    assert.is_false(ui_state.open)
   end)
 end)
